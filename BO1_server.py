@@ -20,11 +20,20 @@ def send_sales_data():
     connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
     channel = connection.channel()
 
-    # Declare the and queue names
-    queue_name = 'bo1_sales_queue'
+    # Declare the exchange and queue names
+    exchange_name = 'sales_exchange'
+    queue_name = 'ho_sales_queue'
+    routing_key = 'sales.ho'
+
+    # Declare the exchange
+    channel.exchange_declare(exchange=exchange_name, exchange_type='direct')
+
 
     # Declare the queue
     channel.queue_declare(queue=queue_name)
+
+    # Bind the queue to the exchange
+    channel.queue_bind(exchange=exchange_name, queue=queue_name, routing_key=routing_key)
     # Fetch the latest sales data from the BO database
     cursor = bo1_db.cursor()
     query = "SELECT * FROM sales ORDER BY sale_date DESC LIMIT 10"
@@ -35,7 +44,7 @@ def send_sales_data():
     # Convert the rows to a JSON string and send it to the HO database
     message =json.dumps(rows, cls=CustomJSONEncoder)
     # print(rows)
-    channel.basic_publish(exchange='', routing_key=queue_name, body=message)
+    channel.basic_publish(exchange=exchange_name, routing_key=routing_key, body=message)
 
     print('Sent sales data to HO database')
     # Close the connection
