@@ -1,8 +1,7 @@
 import mysql.connector
 import pika
 import json
-import time
-from CustomJSONEncoder  import CustomJSONEncoder;
+from CustomJSONEncoderDecoder  import CustomJSONEncoder;
 
 # Connect to the BO database
 bo1_db = mysql.connector.connect(
@@ -54,6 +53,3 @@ def send_sales_data():
 
 
 send_sales_data()
-
-
-

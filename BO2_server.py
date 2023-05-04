@@ -2,7 +2,7 @@ import mysql.connector
 import pika
 import json
 import time
-from CustomJSONEncoder  import CustomJSONEncoder;
+from CustomJSONEncoderDecoder  import CustomJSONEncoder;
 
 # Connect to the BO database
 bo2_db = mysql.connector.connect(
