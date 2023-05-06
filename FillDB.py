@@ -3,17 +3,17 @@ import mysql.connector
 # Connect to the database
 cnx = mysql.connector.connect(user='root', password='',
                               host='localhost',
-                              database='ho_sales')
+                              database='bo2_sales')
 cursor = cnx.cursor()
 
 
 # Execute the query
-query= "CREATE TABLE sales (\
-         id INT AUTO_INCREMENT PRIMARY KEY  ,\
-         product_name VARCHAR(50) NOT NULL,\
-         sale_date DATE NOT NULL,\
-         bo_id VARCHAR(50) NOT NULL \
-        );"
+# query= "CREATE TABLE sales (\
+#          id INT AUTO_INCREMENT PRIMARY KEY  ,\
+#          product_name VARCHAR(50) NOT NULL,\
+#          sale_date DATE NOT NULL,\
+#          bo_id VARCHAR(50) NOT NULL \
+#         );"
 # queries.push( "CREATE TABLE sales (\
 #          id INT AUTO_INCREMENT PRIMARY KEY  ,\
 #          product_name VARCHAR(50) NOT NULL,\
@@ -39,6 +39,14 @@ query= "CREATE TABLE sales (\
 #             SET NEW.isSync = FALSE;\
 #           END IF;\
 #         END;")
+query="DELIMITER //\
+      CREATE TRIGGER set_sync_false BEFORE UPDATE ON sales\
+      FOR EACH ROW\
+      BEGIN\
+        SET NEW.isSync = false;\
+      END//\
+      DELIMITER ;"
+
 
 print(query)
 cursor.execute(query)
