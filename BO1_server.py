@@ -39,11 +39,15 @@ def send_sales_data():
     query = "SELECT * FROM sales WHERE isSync = 0 ORDER BY sale_date DESC LIMIT 10"
     cursor.execute(query)
     rows = cursor.fetchall()
+    rows.append("1")
+
     cursor.close()
 
 
    # Convert the rows to a JSON string and send it to the HO database
     message = json.dumps(rows, cls=CustomJSONEncoder)
+    print(message)
+
     # Publish the message to RabbitMQ
     channel.basic_publish(exchange=exchange_name, routing_key=routing_key, body=message)
 

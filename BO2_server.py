@@ -39,6 +39,7 @@ def send_sales_data():
     query = "SELECT * FROM sales WHERE isSync = 0 ORDER BY sale_date DESC LIMIT 10"
     cursor.execute(query)
     rows = cursor.fetchall()
+    rows.append("2")
     cursor.close()
 
     # Convert the rows to a JSON string and send it to the HO database

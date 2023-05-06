@@ -39,12 +39,12 @@ def handle_sales_data(ch, method, properties, body):
 
     # Insert the sales data into the HO database
     cursor = ho_db.cursor()
-    query = "INSERT INTO sales (product_name, sale_date) VALUES ( %s, %s)"
-    for row in rows:
+    query = "INSERT INTO sales (product_name, sale_date, bo_id) VALUES ( %s, %s,%s)"
+    for row in rows[:-1]:
         # check if the BO_id exists in the HO DB
           # if exists then update it
           # if not exists then insert new row
-        values = (row[1], row[2])
+        values = (row[1], row[2], "{}-{}".format(rows[-1],row[0]),)
         cursor.execute(query, values)
     ho_db.commit()
     cursor.close()
