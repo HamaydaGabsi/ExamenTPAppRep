@@ -39,20 +39,21 @@ def send_sales_data():
     query = "SELECT * FROM sales WHERE isSync = 0 ORDER BY sale_date DESC LIMIT 10"
     cursor.execute(query)
     rows = cursor.fetchall()
-    rows.append("1")
-    cursor.close()
+    if rows:
+      rows.append("1")
+      cursor.close()
 
-    # Convert the rows to a JSON string and send it to the HO database
-    message = json.dumps(rows, cls=CustomJSONEncoder)
-    # Publish the message to RabbitMQ
-    channel.basic_publish(exchange=exchange_name, routing_key=routing_key, body=message,properties=pika.BasicProperties(delivery_mode=2))
+      # Convert the rows to a JSON string and send it to the HO database
+      message = json.dumps(rows, cls=CustomJSONEncoder)
+      # Publish the message to RabbitMQ
+      channel.basic_publish(exchange=exchange_name, routing_key=routing_key, body=message,properties=pika.BasicProperties(delivery_mode=2))
 
-    # Update the isSync column for the rows that were sent
-    cursor = bo1_db.cursor()
-    update_query = "UPDATE sales SET isSync = 1 WHERE id IN (%s)"
-    update_query_params = ', '.join(str(row[0]) for row in rows)
-    cursor.execute(update_query % update_query_params)
-    bo1_db.commit()
+      # Update the isSync column for the rows that were sent
+      cursor = bo1_db.cursor()
+      update_query = "UPDATE sales SET isSync = 1 WHERE id IN (%s)"
+      update_query_params = ', '.join(str(row[0]) for row in rows)
+      cursor.execute(update_query % update_query_params)
+      bo1_db.commit()
     cursor.close()
 
     print('Sent sales data to HO database')
