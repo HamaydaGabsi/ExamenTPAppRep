@@ -23,7 +23,7 @@ routing_key = 'sales.ho'
 channel.exchange_declare(exchange=exchange_name, exchange_type='direct')
 
 # Declare the queue
-channel.queue_declare(queue=queue_name)
+channel.queue_declare(queue=queue_name, durable=True)
 
 # Bind the queue to the exchange with the routing key
 channel.queue_bind(exchange=exchange_name, queue=queue_name,

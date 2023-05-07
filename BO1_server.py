@@ -30,7 +30,7 @@ def send_sales_data():
 
 
     # Declare the queue
-    channel.queue_declare(queue=queue_name)
+    channel.queue_declare(queue=queue_name, durable=True)
 
     # Bind the queue to the exchange
     channel.queue_bind(exchange=exchange_name, queue=queue_name, routing_key=routing_key)
@@ -45,7 +45,7 @@ def send_sales_data():
     # Convert the rows to a JSON string and send it to the HO database
     message = json.dumps(rows, cls=CustomJSONEncoder)
     # Publish the message to RabbitMQ
-    channel.basic_publish(exchange=exchange_name, routing_key=routing_key, body=message)
+    channel.basic_publish(exchange=exchange_name, routing_key=routing_key, body=message,properties=pika.BasicProperties(delivery_mode=2))
 
     # Update the isSync column for the rows that were sent
     cursor = bo1_db.cursor()
