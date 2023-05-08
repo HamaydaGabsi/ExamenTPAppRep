@@ -2,6 +2,7 @@ import mysql.connector
 import pika
 import json
 import time
+import tkinter as tk
 from CustomJSONEncoderDecoder  import CustomJSONEncoder;
 
 # Connect to the BO database
@@ -60,4 +61,19 @@ def send_sales_data():
     # Close the connection
     connection.close()
 
-# Start the sending loop
+def refresh_table(treeview):
+        # Clear the table
+        treeview.delete(*treeview.get_children())
+        # Fetch the unsynchronized sales data from the BO database
+        cursor = bo2_db.cursor()
+        query = "SELECT * FROM sales WHERE isSync = 0 ORDER BY sale_date DESC"
+        cursor.execute(query)
+        print('executed query')
+        rows = cursor.fetchall()
+        cursor.close()
+
+        # Populate the table with the sales data
+        for row in rows:
+            treeview.insert("", tk.END, values=row)
+            print("inserting in roww")
+        # Close the database connection
